@@ -5,11 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#fff0f5">
 <title>For Mahi 💗</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{--pink:#ff6f9f;--deep:#9d426b;--cream:#fff8f5;--ink:#65384d}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;font-family:Georgia,"Times New Roman",serif;color:var(--ink);background:radial-gradient(circle at 15% 15%,#fff 0 2px,transparent 3px),linear-gradient(135deg,#ffe7ef,#fff5e9 52%,#f8e7ff);overflow-x:hidden}
+body.loading-lock{overflow:hidden}
 button{font:inherit;cursor:pointer}
+
+/* Preloader overlay */
+#preloader{position:fixed;inset:0;z-index:999;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#ffe7ef,#fff5e9 52%,#f8e7ff);transition:opacity .5s ease,visibility .5s ease}
+#preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+.loader-box{text-align:center;width:min(360px,100%);background:#ffffffd9;border:1px solid #fff;border-radius:26px;padding:30px 24px;box-shadow:0 18px 50px #a34c7022}
+.loader-heart{font-size:42px;display:inline-block;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.loader-title{margin:10px 0 6px;font-size:1.25rem;color:#a94f77}
+.loader-bar{width:100%;height:8px;background:#f7d5e1;border-radius:999px;overflow:hidden;margin:14px 0 8px}
+.loader-fill{height:100%;width:0%;background:linear-gradient(90deg,#ff79a4,#ee5f91);border-radius:999px;transition:width .25s ease}
+.loader-status{font:12px system-ui;color:#9c6680}
+
 .page{min-height:100vh;display:grid;place-items:center;padding:28px 16px;position:relative;overflow:hidden}
 .card{width:min(680px,100%);text-align:center;padding:clamp(24px,5vw,48px);background:#ffffffc9;border:1px solid #fff;box-shadow:0 18px 60px #a34c7020;border-radius:30px;backdrop-filter:blur(8px);position:relative;z-index:2}
 .eyebrow{font:600 12px/1.4 system-ui;letter-spacing:.22em;text-transform:uppercase;color:#bd6688}
@@ -38,40 +52,113 @@ p{font-size:clamp(1rem,2.6vw,1.15rem);line-height:1.65}
 @keyframes floatUp{to{transform:translateY(-120vh) translateX(35px)}}
 .choices{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
 .progress{font:12px system-ui;color:#b77a93;margin-bottom:15px}
+.chat-back{position:absolute;top:16px;left:16px;border:1px solid #f4bfd0;background:#fff;color:#a94f77;border-radius:999px;padding:7px 14px;font:600 13px system-ui;transition:.2s}
+.chat-back:hover{background:#fff0f6;transform:translateX(-2px)}
+#chat{padding-top:clamp(46px,8vw,56px)}
 .gifts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:24px}
-.mini{background:#fff;border:1px solid #f7c8d8;border-radius:20px;padding:18px 8px;min-height:145px;color:#a94f77;box-shadow:0 8px 22px #a34c7014}
+.mini{background:#fff;border:1px solid #f7c8d8;border-radius:20px;padding:18px 8px;min-height:145px;color:#a94f77;box-shadow:0 8px 22px #a34c7014;position:relative;transition:transform .2s}
+.mini:hover{transform:translateY(-3px)}
 .mini .emoji{font-size:42px;display:block;margin-bottom:8px}
 .mini strong{font:600 14px system-ui}
 @media(max-width:520px){.gifts-grid{grid-template-columns:1fr}.mini{min-height:100px;display:flex;align-items:center;justify-content:center;gap:15px}.mini .emoji{margin:0}.card{border-radius:23px}}
+
 /* full-screen gift pages */
 .modal{position:fixed;inset:0;z-index:10;background:linear-gradient(145deg,#fff0f5,#fffaf1 60%,#f7eaff);overflow-y:auto;padding:22px 16px 36px;display:none}
 .modal.show{display:block;animation:fade .25s ease}
+.modal.dark-mode{background:#000;padding:0;overflow:hidden}
+.modal.wish-jar-mode{background:radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%);padding:0;overflow:hidden}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-.close{position:fixed;right:17px;top:14px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:#9d426b;font:26px system-ui;box-shadow:0 4px 18px #9d426b22;z-index:12}
+.close{position:fixed;right:17px;top:14px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:#9d426b;font:26px system-ui;box-shadow:0 4px 18px #9d426b22;z-index:35}
+.modal.dark-mode .close,.modal.wish-jar-mode .close{background:rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(6px);box-shadow:none}
 .modal-inner{width:min(900px,100%);margin:42px auto 0;text-align:center}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:150px;gap:10px;margin:25px auto;max-width:760px}
-.gallery img{width:100%;height:100%;object-fit:cover;border-radius:16px;box-shadow:0 8px 22px #78445b20}
-.gallery img:nth-child(3n+1){grid-row:span 2}
-.gallery img:nth-child(4n){transform:rotate(1deg)}
-.empty{padding:28px;border:1px dashed #e8a8c0;border-radius:18px;background:#ffffff9c}
-.slider{max-width:700px;margin:22px auto}
-.slide-frame{height:min(62vh,520px);display:grid;place-items:center;background:#ffffff9c;border-radius:22px;padding:12px}
-.slide-frame img{max-width:100%;max-height:100%;object-fit:contain;border-radius:14px}
-.slide-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:14px}
-.counter{font:13px system-ui;color:#a46b83}
-.letter{max-width:650px;margin:25px auto;padding:clamp(24px,5vw,44px);background:#fff;border-radius:22px;box-shadow:0 12px 35px #9d426b17;text-align:left;line-height:1.85;font-size:1.08rem}
-.wish{background:#fff;border:1px solid #f4c3d3;border-radius:18px;padding:16px;margin:10px auto;max-width:540px}
+.modal.dark-mode .modal-inner,.modal.wish-jar-mode .modal-inner{width:100%;height:100%;margin:0}
+
+/* Starry Night Wish Jar (Gift 3) */
+.starry-night{position:relative;width:100vw;height:100dvh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+.stars-layer{position:absolute;inset:0;pointer-events:none}
+.star{position:absolute;background:white;border-radius:50%;animation:twinkle linear infinite}
+@keyframes twinkle{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+.jar-title{font-family:'Dancing Script',cursive;font-weight:700;font-size:clamp(2.2rem,7.5vw,3.3rem);color:#fff;margin:0 0 36px;padding:0 16px;text-align:center;text-shadow:0 4px 18px rgba(0,0,0,.45);position:relative;z-index:10}
+.jar-stage{position:relative;display:flex;flex-direction:column;align-items:center;z-index:10;margin-top:32px}
+.magic-jar{cursor:pointer;margin-top:78px;transition:all .3s ease;filter:drop-shadow(0 0 20px rgba(255,215,0,.4))}
+.magic-jar:hover{transform:scale(1.05);filter:drop-shadow(0 0 35px rgba(255,215,0,.8))}
+.paper-slip{position:absolute;top:0;width:min(320px,82vw);background:#fffdf5;color:#5c4a3d;padding:20px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.3);font-family:'Dancing Script',cursive;font-size:1.5rem;line-height:1.35;text-align:center;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;z-index:20}
+.paper-slip.show{opacity:1;transform:translateY(-80px) scale(1.1)}
+.jar-hint{color:rgba(255,255,255,.7);margin-top:24px;font:300 13px system-ui;letter-spacing:.16em;text-transform:uppercase}
+
+/* Dark scatter stage for Cute Moments */
+.scatter-stage{position:relative;width:100vw;height:100dvh;overflow:hidden;background:#000}
+.scatter-photo{position:absolute;border-radius:10px;background:#fff;padding:4px;box-shadow:0 12px 30px rgba(0,0,0,.75);opacity:0;transform:scale(.6) rotate(var(--rot));transition:opacity .45s ease,transform .5s cubic-bezier(.22,1,.36,1);pointer-events:none;display:flex;align-items:center;justify-content:center}
+.scatter-photo.visible{opacity:1;transform:scale(1) rotate(var(--rot))}
+.scatter-photo.fade-out{opacity:0;transform:scale(.85) rotate(var(--rot));transition:opacity .4s ease,transform .4s ease}
+.scatter-photo img{width:100%;height:100%;object-fit:contain;border-radius:7px;display:block}
+.scatter-next-wrap{position:fixed;left:0;right:0;bottom:26px;display:flex;justify-content:center;z-index:25;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .45s ease,transform .45s ease}
+.scatter-next-wrap.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.scatter-next-btn{border:0;border-radius:999px;padding:14px 32px;background:linear-gradient(135deg,#ff79a4,#ee5f91);color:#fff;font:600 16px system-ui;box-shadow:0 10px 30px rgba(255,111,159,.45)}
+
+/* Full-screen dark swipe slider (Cute Moments & My 11:11) */
+.dark-slider-wrap{position:fixed;inset:0;width:100vw;height:100dvh;background:#000;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;animation:fade .35s ease}
+.dark-slide-viewport{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;position:relative}
+.dark-slide-img{width:100%;height:100%;object-fit:contain;background:#000;display:block;pointer-events:none}
+.slide-in-right{animation:slideInRight .34s cubic-bezier(.22,1,.36,1)}
+.slide-in-left{animation:slideInLeft .34s cubic-bezier(.22,1,.36,1)}
+@keyframes slideInRight{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+.dark-slide-counter{position:fixed;top:18px;left:18px;z-index:25;font:600 13px system-ui;color:rgba(255,255,255,.75);text-shadow:0 2px 8px rgba(0,0,0,.9);pointer-events:none}
+
+/* Cute Moments bottom 2-line birthday overlay */
+.cute-overlay{position:fixed;left:0;right:0;bottom:0;z-index:24;pointer-events:none;padding:48px 20px clamp(38px,7vh,72px);background:linear-gradient(to top,rgba(0,0,0,.82) 0%,rgba(0,0,0,.42) 55%,transparent 100%);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;animation:overlayRise .7s cubic-bezier(.22,1,.36,1)}
+@keyframes overlayRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.cute-overlay-line1{font:500 clamp(13px,3.6vw,17px)/1.3 system-ui;letter-spacing:.32em;text-transform:uppercase;color:#ffd6e5;text-shadow:0 2px 14px rgba(0,0,0,.9),0 0 18px rgba(255,111,159,.55);margin-bottom:4px}
+.cute-overlay-line2{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:700;font-size:clamp(2.1rem,9vw,3.4rem);line-height:1.1;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.95),0 0 28px rgba(255,111,159,.65)}
+.cute-overlay-name{background:linear-gradient(120deg,#ffffff 15%,#ffd1e3 55%,#ff9bc0 95%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 3px 14px rgba(255,111,159,.45))}
+.cute-overlay-gif{height:clamp(36px,9vw,54px);width:auto;max-width:72px;object-fit:contain;border-radius:10px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.85));vertical-align:middle}
+
+/* Transparent swipe-left hint animation */
+.swipe-hint{position:fixed;inset:0;z-index:28;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14vh;background:transparent;pointer-events:none;transition:opacity .5s ease}
+.swipe-hint.with-overlay{padding-bottom:24vh}
+.swipe-hint.hide{opacity:0}
+.swipe-hand-track{display:flex;align-items:center;gap:10px;background:transparent}
+.swipe-arrows{font:700 22px system-ui;color:rgba(255,255,255,.92);letter-spacing:4px;text-shadow:0 2px 12px rgba(0,0,0,.95);animation:swipeArrows 1.35s ease-in-out infinite}
+.swipe-hand{font-size:36px;filter:drop-shadow(0 3px 10px rgba(0,0,0,.95));animation:swipeGlide 1.35s ease-in-out infinite}
+.swipe-label{margin-top:8px;font:600 14px system-ui;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.92);text-shadow:0 2px 12px rgba(0,0,0,.95)}
+@keyframes swipeGlide{
+  0%{transform:translateX(26px);opacity:0}
+  20%{opacity:1}
+  80%{transform:translateX(-26px);opacity:1}
+  100%{transform:translateX(-34px);opacity:0}
+}
+@keyframes swipeArrows{
+  0%,100%{opacity:.35;transform:translateX(4px)}
+  50%{opacity:1;transform:translateX(-6px)}
+}
+
+/* Full-screen black Secret Birthday Message modal */
+.secret-modal{position:fixed;inset:0;z-index:40;background:radial-gradient(circle at 50% 35%,rgba(255,111,159,.14),#000 68%);display:none;place-items:center;padding:28px 20px;overflow-y:auto}
+.secret-modal.show{display:grid;animation:fade .6s ease}
+.secret-modal-inner{width:min(600px,100%);text-align:center;color:#fff;padding:clamp(26px,6vw,44px);border-radius:28px;border:1px solid rgba(255,165,198,.22);background:rgba(18,10,16,.78);backdrop-filter:blur(10px);box-shadow:0 0 60px rgba(255,111,159,.18);animation:overlayRise .75s cubic-bezier(.22,1,.36,1)}
+.secret-modal .eyebrow{color:#ff9ec0;margin-bottom:8px}
+.secret-modal h2{color:#fff;font-size:clamp(1.7rem,6vw,2.6rem);margin:8px 0 18px;text-shadow:0 0 24px rgba(255,111,159,.45)}
+.secret-modal p{color:#f7dce6;font-size:clamp(1.02rem,2.8vw,1.18rem);line-height:1.85;margin:0 0 20px}
+.secret-modal-emojis{font-size:30px;letter-spacing:8px;margin-top:6px}
+.secret-modal .close{background:rgba(255,255,255,.14);color:#fff;box-shadow:none}
+
+.dark-empty{height:100dvh;display:grid;place-items:center;color:#f4bfd0;padding:24px;text-align:center;background:#000}
 footer{font:12px system-ui;color:#b17c92;margin-top:28px}
 .countdown{margin:22px auto 8px;padding:16px;background:#fff8fb;border:1px solid #f4c3d3;border-radius:18px;max-width:480px}
 .countdown-time{font:700 clamp(20px,5vw,30px) system-ui;color:#a94f77;letter-spacing:.04em;margin:10px 0}
-.date-setting{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
-.date-setting input{padding:10px;border:1px solid #efbfd0;border-radius:10px;color:#65384d;background:white}
-.secret{margin:22px auto 0;padding:22px;background:linear-gradient(135deg,#fff,#fff0f6);border:1px solid #f1bfd1;border-radius:20px;max-width:580px}
-.secret h2{color:#a94f77}
-@media(max-width:600px){.gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:125px}.gallery img:nth-child(3n+1){grid-row:span 1}}
 </style>
 </head>
-<body>
+<body class="loading-lock">
+<div id="preloader" aria-live="polite">
+  <div class="loader-box">
+    <div class="loader-heart">💗</div>
+    <div class="loader-title">Wrapping your surprise, Mahi…</div>
+    <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+    <div class="loader-status" id="loaderStatus">Loading memories…</div>
+  </div>
+</div>
+
 <div id="balloons" aria-hidden="true"></div>
 <main class="page">
   <section class="card" id="intro">
@@ -79,20 +166,18 @@ footer{font:12px system-ui;color:#b17c92;margin-top:28px}
     <h1>Hey, Mahi! 💗</h1>
     <div class="countdown">
       <strong>Counting down to your special day ✨</strong>
-      <div class="countdown-time" id="countdownDisplay">Set your birthday date below</div>
-      <div class="date-setting">
-        <input type="date" id="birthdayDate" aria-label="Birthday date">
-        <button class="btn" id="saveBirthdayDate">Save date</button>
+      <div class="countdown-time" id="countdownDisplay">Loading countdown...</div>
+      <small id="countdownHint">Time until your special day ✨</small>
+    </div>
+    <div id="giftArea" class="hidden">
+      <p>Someone has a tiny surprise waiting just for you…</p>
+      <div class="gift-wrap">
+        <button class="gift" id="openGift" aria-label="Open your birthday gift">
+          <span class="lid"></span><span class="base"></span>
+        </button>
       </div>
-      <small id="countdownHint">Choose the birthday date to start the countdown.</small>
+      <div class="hint">tap the gift to open ✨</div>
     </div>
-    <p>Someone has a tiny surprise waiting just for you…</p>
-    <div class="gift-wrap">
-      <button class="gift" id="openGift" aria-label="Open your birthday gift">
-        <span class="lid"></span><span class="base"></span>
-      </button>
-    </div>
-    <div class="hint">tap the gift to open ✨</div>
   </section>
 
   <section class="card hidden" id="birthday">
@@ -103,6 +188,7 @@ footer{font:12px system-ui;color:#b17c92;margin-top:28px}
   </section>
 
   <section class="card hidden" id="chat">
+    <button class="chat-back hidden" id="chatBack" aria-label="Previous question">← Back</button>
     <div class="progress" id="progress">A tiny birthday conversation · 1/4</div>
     <h2 id="question">How are you feeling today,My birthday girl?</h2>
     <p id="subquestion">Choose honestly — this is your day. 💞</p>
@@ -114,17 +200,12 @@ footer{font:12px system-ui;color:#b17c92;margin-top:28px}
     <h1>Here are mini gifts for you! 🎁</h1>
     <p>I saved three little corners of happiness for you. Open them in any order.</p>
     <div class="gifts-grid">
-      <button class="mini" onclick="openAlbum(0)"><span class="emoji">📸</span><strong>Little Memories</strong></button>
-      <button class="mini" onclick="openAlbum(1)"><span class="emoji">🌷</span><strong>More Moments</strong></button>
-      <button class="mini" onclick="openAlbum(2)"><span class="emoji">💌</span><strong>A note for you</strong></button>
+      <button class="mini" onclick="openAlbum(0)"><span class="emoji">📸</span><strong>cute moments</strong></button>
+      <button class="mini" onclick="openAlbum(1)"><span class="emoji">🌷</span><strong>My  11:11</strong></button>
+      <button class="mini" onclick="openAlbum(2)"><span class="emoji">🫙</span><strong>Wish Jar</strong></button>
     </div>
-    <div class="secret hidden" id="secretMessage">
-      <div class="eyebrow">you found every little surprise</div>
-      <h2>Your secret birthday message 💌</h2>
-      <p>Mahi, if you have opened all three gifts, then you have reached the final little surprise. I hope these memories made you smile. You deserve a year full of laughter, peaceful days, unexpected happiness, and beautiful moments. Never forget how special you are. Happy birthday once again! 🫶🏻✨💓</p>
-      <div style="font-size:28px">🌷 💗 🎂 ✨</div>
-    </div>
-    <p id="secretLocked" class="hint">🔒 Open all three mini gifts to unlock your secret message.</p>
+    <p id="secretLocked" class="hint" style="margin-top:20px">🫶🏻💓🫶🏻</p>
+    <button class="btn hidden" id="reopenSecretBtn" style="margin-top:20px" onclick="openSecretModal()">Read your secret message again 💌</button>
     <footer>made especially for Mahi, with a little extra sparkle ✨</footer>
   </section>
 </main>
@@ -134,30 +215,69 @@ footer{font:12px system-ui;color:#b17c92;margin-top:28px}
   <div class="modal-inner" id="albumContent"></div>
 </section>
 
+<section class="secret-modal" id="secretModal" aria-modal="true" role="dialog">
+  <button class="close" onclick="closeSecretModal()" aria-label="Close">×</button>
+  <div class="secret-modal-inner">
+    <div class="eyebrow">you found every little surprise</div>
+    <h2>Your secret birthday message 💌</h2>
+    <p>Mahi, if you have opened all three gifts, then you have reached the final little surprise. I hope these memories made you smile. You deserve a year full of laughter, peaceful days, unexpected happiness, and beautiful moments. Never forget how special you are. Happy birthday once again! 🫶🏻✨💓</p>
+    <div class="secret-modal-emojis">🌷 💗 🎂 ✨</div>
+  </div>
+</section>
+
 <script>
-/* Birthday date is chosen on the page and saved in this browser. */
-const birthdayInput = document.getElementById('birthdayDate');
+/* Default config (overridden by date.json if present) */
+let targetDate = new Date('2026-12-08T00:00:00');
+let showRealImages = true;
+
+/* Default HTML placeholder image (inline SVG so it works offline & keeps aspect ratio) */
+const HTML_PLACEHOLDER_IMG = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">' +
+  '<rect width="400" height="500" fill="#e5e7eb"/>' +
+  '<rect x="18" y="18" width="364" height="464" rx="14" fill="#f3f4f6" stroke="#cbd5e1" stroke-width="4"/>' +
+  '<circle cx="145" cy="185" r="28" fill="#cbd5e1"/>' +
+  '<path d="M72 340 L165 235 L235 305 L278 262 L328 340 Z" fill="#cbd5e1"/>' +
+  '<text x="200" y="395" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" fill="#94a3b8">Image Placeholder</text>' +
+  '</svg>'
+);
+
 const countdownDisplay = document.getElementById('countdownDisplay');
 const countdownHint = document.getElementById('countdownHint');
-let birthdayTimer = null;
+const giftArea = document.getElementById('giftArea');
+
+function parseTargetDate(raw) {
+  if (typeof raw !== 'string' || !raw.trim()) return null;
+  const trimmed = raw.trim();
+  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed + 'T00:00:00' : trimmed;
+  const parsed = new Date(normalized);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+async function loadDateConfig() {
+  try {
+    const r = await fetch('date.json', { cache: 'no-store' });
+    if (r.ok) {
+      const data = await r.json();
+      if (data && typeof data === 'object') {
+        const parsed = parseTargetDate(data.date);
+        if (parsed) targetDate = parsed;
+        if (typeof data.showImages === 'boolean') showRealImages = data.showImages;
+        else if (typeof data.show_images === 'boolean') showRealImages = data.show_images;
+        else if (typeof data['show images'] === 'boolean') showRealImages = data['show images'];
+      }
+    }
+  } catch (e) {}
+}
+
 function updateCountdown() {
-  const saved = localStorage.getItem('mahiBirthdayDate');
-  if (!saved) {
-    countdownDisplay.textContent = 'Your day is almost here 💗';
-    countdownHint.textContent = 'Choose the birthday date to start the countdown.';
-    return;
-  }
-  const target = new Date(saved + 'T00:00:00');
-  const diff = target.getTime() - Date.now();
-  if (Number.isNaN(target.getTime())) {
-    countdownDisplay.textContent = 'Choose a valid date';
-    return;
-  }
+  const diff = targetDate.getTime() - Date.now();
   if (diff <= 0) {
     countdownDisplay.textContent = 'It is your birthday! 🎂';
     countdownHint.textContent = 'Today is all about you, Mahi!';
+    giftArea.classList.remove('hidden');
     return;
   }
+  giftArea.classList.add('hidden');
   const days = Math.floor(diff / 86400000);
   const hours = Math.floor((diff % 86400000) / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
@@ -165,24 +285,172 @@ function updateCountdown() {
   countdownDisplay.textContent = `${days}d ${hours}h ${mins}m ${secs}s`;
   countdownHint.textContent = 'Time until your special day ✨';
 }
-try {
-  const savedDate = localStorage.getItem('mahiBirthdayDate');
-  if (savedDate) birthdayInput.value = savedDate;
-} catch (e) {}
-document.getElementById('saveBirthdayDate').addEventListener('click', () => {
-  if (!birthdayInput.value) {
-    countdownHint.textContent = 'Please choose a date first.';
-    return;
-  }
-  try { localStorage.setItem('mahiBirthdayDate', birthdayInput.value); } catch (e) {}
-  updateCountdown();
-});
-updateCountdown();
-birthdayTimer = setInterval(updateCountdown, 1000);
 
-/* Add your photos to /images and /images1. For hosts that don't show folder
-   listings, create images.json and images1.json containing arrays of filenames,
-   e.g. ["photo1.jpg","photo2.png"]. */
+/* Enter browser fullscreen */
+function enterFullscreen() {
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (req && !document.fullscreenElement && !document.webkitFullscreenElement) {
+    try {
+      const res = req.call(el);
+      if (res && typeof res.catch === 'function') res.catch(() => {});
+    } catch (e) {}
+  }
+}
+
+/* Wish Jar messages (loaded from wish-jar.json, with built-in fallback) */
+let wishJarMessages = [
+  "Your smile lights up my whole world. ✨",
+  "You are my absolute favorite notification. 📱💖",
+  "I love the way your eyes sparkle when you laugh. 🥺",
+  "You make every single day better just by being in it.",
+  "Your kindness and heart make me fall for you more every day.",
+  "You are the most beautiful person, inside and out. 🌹",
+  "I cherish every tiny moment spent with you.",
+  "You're not just my girlfriend, you're my safe place. 🏡❤️",
+  "Your giggles are my favorite sound in the world.",
+  "I love how we can talk about everything and nothing at all. 🗣️💫"
+];
+let lastWishIndex = -1;
+
+async function loadWishJarMessages() {
+  try {
+    const r = await fetch('wish-jar.json', { cache: 'no-store' });
+    if (r.ok) {
+      const data = await r.json();
+      const list = Array.isArray(data)
+        ? data
+        : (Array.isArray(data.messages) ? data.messages : (Array.isArray(data.wishes) ? data.wishes : []));
+      const cleaned = list.filter(x => typeof x === 'string' && x.trim().length > 0);
+      if (cleaned.length) wishJarMessages = cleaned;
+    }
+  } catch (e) {}
+}
+
+/* Preload & cache all images + store their natural aspect ratios */
+const cachedAlbums = { images: [], images1: [] };
+const imageDimensions = {};
+let cuteGifSrc = 'images/gif.png';
+window._preloadedImages = [];
+
+async function getImages(folder) {
+  try {
+    const r = await fetch(folder + '.json', { cache: 'no-store' });
+    if (r.ok) {
+      const data = await r.json();
+      if (Array.isArray(data)) {
+        return data.map(x => typeof x === 'string' ? folder + '/' + x : x).filter(Boolean);
+      }
+    }
+  } catch (e) {}
+  try {
+    const r = await fetch(folder + '/', { cache: 'no-store' });
+    if (r.ok) {
+      const html = await r.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return [...doc.querySelectorAll('a[href]')]
+        .map(a => a.getAttribute('href'))
+        .filter(x => /\.(jpe?g|png|gif|webp|avif)$/i.test(x || ''))
+        .map(x => folder + '/' + x.split('/').pop());
+    }
+  } catch (e) {}
+  return [];
+}
+
+function preloadSingleImage(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      imageDimensions[src] = {
+        w: img.naturalWidth || 400,
+        h: img.naturalHeight || 500
+      };
+      window._preloadedImages.push(img);
+      resolve();
+    };
+    img.onload = () => {
+      if (img.decode) img.decode().then(finish).catch(finish);
+      else finish();
+    };
+    img.onerror = finish;
+    setTimeout(finish, 12000);
+    img.src = src;
+  });
+}
+
+async function initAndPreload() {
+  const fill = document.getElementById('loaderFill');
+  const status = document.getElementById('loaderStatus');
+  const preloader = document.getElementById('preloader');
+
+  await Promise.all([loadDateConfig(), loadWishJarMessages()]);
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  let allUrls = [];
+
+  if (showRealImages) {
+    const [rawAlbum0, album1] = await Promise.all([
+      getImages('images'),
+      getImages('images1')
+    ]);
+
+    /* Separate images/gif.(png|jpg|jpeg|gif|webp) so it is used in the overlay, not as a regular slide */
+    const gifPattern = /(^|\/)gif\.(png|jpe?g|gif|webp)$/i;
+    const foundGif = rawAlbum0.find(src => gifPattern.test(src));
+    if (foundGif) cuteGifSrc = foundGif;
+    const album0 = rawAlbum0.filter(src => !gifPattern.test(src));
+
+    cachedAlbums.images = album0;
+    cachedAlbums.images1 = album1;
+    allUrls = [...new Set([...album0, ...album1, cuteGifSrc])];
+  } else {
+    /* showImages is false -> 50 placeholders in section 1, 2 placeholders in section 2 */
+    cachedAlbums.images = Array(50).fill(HTML_PLACEHOLDER_IMG);
+    cachedAlbums.images1 = Array(2).fill(HTML_PLACEHOLDER_IMG);
+    allUrls = [HTML_PLACEHOLDER_IMG, cuteGifSrc];
+  }
+
+  if (!allUrls.length) {
+    fill.style.width = '100%';
+    status.textContent = 'Ready ✨';
+  } else {
+    let loaded = 0;
+    status.textContent = `Loading memories (0 / ${allUrls.length})…`;
+    await Promise.all(allUrls.map(url =>
+      preloadSingleImage(url).then(() => {
+        loaded++;
+        const pct = Math.round((loaded / allUrls.length) * 100);
+        fill.style.width = pct + '%';
+        status.textContent = `Loading memories (${loaded} / ${allUrls.length})…`;
+      })
+    ));
+  }
+
+  setTimeout(() => {
+    preloader.classList.add('done');
+    document.body.classList.remove('loading-lock');
+  }, 250);
+}
+initAndPreload();
+
+/* Fallback helper for images/gif.png -> gif.jpg -> gif.jpeg -> gif.gif */
+function handleGifFallback(img) {
+  const candidates = ['images/gif.png', 'images/gif.jpg', 'images/gif.jpeg', 'images/gif.gif'];
+  const tried = Number(img.dataset.tryIdx || 0);
+  const next = candidates.find((c, idx) => idx >= tried && c !== img.getAttribute('src'));
+  if (next) {
+    img.dataset.tryIdx = String(candidates.indexOf(next) + 1);
+    img.src = next;
+  } else {
+    img.style.display = 'none';
+  }
+}
+
+/* Floating balloons */
 const balloonLayer = document.getElementById('balloons');
 const balloonColors = ['#ff9dbb','#ffd28c','#c7b0ff','#a9d9dc','#ffc1d1'];
 for(let i=0;i<17;i++){
@@ -194,13 +462,15 @@ for(let i=0;i<17;i++){
   b.style.transform='scale('+(0.65+Math.random()*.7)+')';
   balloonLayer.appendChild(b);
 }
+
 const sections=['intro','birthday','chat','final'];
 function showSection(id){sections.forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==id));}
+
 document.getElementById('openGift').addEventListener('click',()=>{
+  enterFullscreen();
   document.getElementById('openGift').classList.add('open');
   setTimeout(()=>showSection('birthday'),450);
 });
-document.getElementById('startChat').addEventListener('click',()=>{showSection('chat');renderQuestion('mood');});
 
 const branches={
  mood:{title:'How are you feeling today, birthday girl?',sub:'Choose honestly — this is your day. 💞',answers:[
@@ -239,74 +509,483 @@ const branches={
  magic:{title:'May little bits of magic find you everywhere. ✨',sub:'You deserve beautiful things.',answers:[['Thank you!','back']]},
  back:{title:'One thing is certain: today, you deserve to feel celebrated. 💐',sub:'Ready for the mini gifts?',answers:[['Show me my gifts! 🎁','finish']]}
 };
-let step=0; const chosen=[];
-function renderQuestion(key){
- const q=branches[key]; if(!q){showSection('final');return;}
- step++;
- document.getElementById('progress').textContent='A tiny birthday conversation · '+Math.min(step,4)+'/4';
- document.getElementById('question').textContent=q.title;
- document.getElementById('subquestion').textContent=q.sub;
- const area=document.getElementById('answers'); area.innerHTML='';
- q.answers.forEach(([label,next])=>{
-  const btn=document.createElement('button');btn.className='btn'+(area.children.length?' alt':'');btn.textContent=label;
-  btn.addEventListener('click',()=>{
-   chosen.push({question:key,answer:label});
-   try{localStorage.setItem('mahiBirthdayChoices',JSON.stringify(chosen));}catch(e){}
-   if(next==='finish')showSection('final');else renderQuestion(next);
-  });area.appendChild(btn);
- });
-}
-async function getImages(folder){
- // Manifest works on almost every static host.
- try{
-  const r=await fetch(folder+'.json',{cache:'no-store'});
-  if(r.ok){const data=await r.json();if(Array.isArray(data))return data.map(x=>typeof x==='string'?folder+'/'+x:x).filter(Boolean);}
- }catch(e){}
- // Directory listing fallback (available on some simple local web servers).
- try{
-  const r=await fetch(folder+'/',{cache:'no-store'});if(r.ok){
-   const html=await r.text();const doc=new DOMParser().parseFromString(html,'text/html');
-   return [...doc.querySelectorAll('a[href]')].map(a=>a.getAttribute('href')).filter(x=>/\.(jpe?g|png|gif|webp|avif)$/i.test(x||'')).map(x=>folder+'/'+x.split('/').pop());
+
+let chatHistory = [];
+const chosen = [];
+const chatBackBtn = document.getElementById('chatBack');
+
+document.getElementById('startChat').addEventListener('click',()=>{
+  chatHistory = ['mood'];
+  chosen.length = 0;
+  showSection('chat');
+  renderCurrentQuestion();
+});
+
+chatBackBtn.addEventListener('click', () => {
+  if (chatHistory.length > 1) {
+    chatHistory.pop();
+    chosen.pop();
+    renderCurrentQuestion();
   }
- }catch(e){}
- return [];
+});
+
+function renderCurrentQuestion() {
+  const key = chatHistory[chatHistory.length - 1];
+  const q = branches[key];
+  if (!q) { showSection('final'); return; }
+
+  const stepNum = Math.min(chatHistory.length, 4);
+  document.getElementById('progress').textContent = 'A tiny birthday conversation · ' + stepNum + '/4';
+  chatBackBtn.classList.toggle('hidden', chatHistory.length <= 1);
+
+  document.getElementById('question').textContent = q.title;
+  document.getElementById('subquestion').textContent = q.sub;
+  const area = document.getElementById('answers');
+  area.innerHTML = '';
+
+  q.answers.forEach(([label, next]) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn' + (area.children.length ? ' alt' : '');
+    btn.textContent = label;
+    btn.addEventListener('click', () => {
+      chosen.push({ question: key, answer: label });
+      try { localStorage.setItem('mahiBirthdayChoices', JSON.stringify(chosen)); } catch (e) {}
+      if (next === 'finish') {
+        showSection('final');
+      } else {
+        chatHistory.push(next);
+        renderCurrentQuestion();
+      }
+    });
+    area.appendChild(btn);
+  });
 }
-let currentImages=[],currentIndex=0;
-const openedGifts = new Set();
-function markGiftOpened(which) {
-  openedGifts.add(which);
-  if (openedGifts.size === 3) {
-    document.getElementById('secretMessage').classList.remove('hidden');
+
+let currentImages = [], currentIndex = 0;
+let activeAlbum = null;
+let scatterTimers = [];
+let hintTimer = null;
+let darkSliderActive = false;
+const completedGifts = new Set();
+let secretShownOnce = false;
+
+function clearScatterTimers() {
+  scatterTimers.forEach(id => clearTimeout(id));
+  scatterTimers = [];
+  if (hintTimer) { clearTimeout(hintTimer); hintTimer = null; }
+}
+
+function openSecretModal() {
+  document.getElementById('secretModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSecretModal() {
+  document.getElementById('secretModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function checkAllGiftsCompleted() {
+  if (completedGifts.size === 3) {
     document.getElementById('secretLocked').classList.add('hidden');
+    document.getElementById('reopenSecretBtn').classList.remove('hidden');
     try { localStorage.setItem('mahiAllGiftsOpened', 'true'); } catch (e) {}
+    if (!secretShownOnce) {
+      secretShownOnce = true;
+      setTimeout(() => openSecretModal(), 260);
+    }
   }
 }
-function openAlbum(which){
- markGiftOpened(which);
- const modal=document.getElementById('albumModal'),content=document.getElementById('albumContent');
- modal.classList.add('show');document.body.style.overflow='hidden';
- if(which===2){content.innerHTML=`<div class="eyebrow">a little note, just for you</div><h1>Dear Mahi 💌</h1><article class="letter"><p>Happy birthday, Mahi! 🫶🏻</p><p>I hope this new chapter brings you countless reasons to smile, kind people, exciting little adventures, and dreams that slowly turn into reality.</p><p>Thank you for being your lovely self. May you always find beauty in the small things, courage for the big things, and warmth whenever you need it.</p><p>Keep shining in your own way. You deserve all the love and happiness this world can offer. 💗</p><p style="text-align:right">With lots of birthday wishes,<br><strong>Your favourite person ✨</strong></p></article><div class="wish"><strong>Birthday wish jar 🌟</strong><p>Tap below for a random little wish.</p><button class="btn" onclick="newWish()">Pick a wish</button><p id="wishText">A year full of beautiful surprises is waiting for you.</p></div>`;return;}
- const folder=which===0?'images':'images1';
- content.innerHTML=`<div class="eyebrow">gift ${which+1} of 3</div><h1>${which===0?'Little Memories 📸':'More Moments 🌷'}</h1><p>Every picture holds a little moment worth keeping.</p><div id="galleryArea"><p class="empty">Looking for your photos…</p></div><button class="btn hidden" id="nextPhotos">Next →</button><div id="sliderArea"></div>`;
- getImages(folder).then(images=>{
-  currentImages=images;currentIndex=0;
-  const area=document.getElementById('galleryArea'),next=document.getElementById('nextPhotos');
-  if(!images.length){area.innerHTML=`<div class="empty">No photos found yet 💗<br>Add pictures to the <strong>${folder}</strong> folder and a matching <strong>${folder}.json</strong> file in the same folder as this page.<br><small>Example: ["photo1.jpg","photo2.png"]</small></div>`;return;}
-  area.innerHTML='<div class="gallery">'+images.map(src=>`<img src="${safeAttr(src)}" alt="A happy memory" loading="lazy" onerror="this.style.display='none'">`).join('')+'</div>';
-  next.classList.remove('hidden');next.onclick=()=>showSlider();
- });
+
+function generateStars() {
+  const container = document.getElementById('stars-container');
+  if (!container || container.children.length > 0) return;
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    const size = Math.random() * 3;
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
+    star.style.animationDuration = `${2 + Math.random() * 4}s`;
+    star.style.animationDelay = `${Math.random() * 2}s`;
+    container.appendChild(star);
+  }
 }
+
+function drawFromJar() {
+  const note = document.getElementById('jar-note');
+  if (!note || !wishJarMessages.length) return;
+
+  function showNewNote() {
+    let idx = Math.floor(Math.random() * wishJarMessages.length);
+    if (wishJarMessages.length > 1 && idx === lastWishIndex) {
+      idx = (idx + 1) % wishJarMessages.length;
+    }
+    lastWishIndex = idx;
+    note.textContent = wishJarMessages[idx];
+    note.classList.add('show');
+  }
+
+  if (note.classList.contains('show')) {
+    note.classList.remove('show');
+    setTimeout(showNewNote, 500);
+  } else {
+    showNewNote();
+  }
+}
+
+function openAlbum(which) {
+  clearScatterTimers();
+  darkSliderActive = false;
+  activeAlbum = which;
+
+  const modal = document.getElementById('albumModal');
+  const content = document.getElementById('albumContent');
+  modal.classList.remove('dark-mode', 'wish-jar-mode');
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  /* Gift 2: Starry Night Wish Jar (loads messages from wish-jar.json) */
+  if (which === 2) {
+    modal.classList.add('wish-jar-mode');
+    content.innerHTML = `
+      <div class="starry-night">
+        <div id="stars-container" class="stars-layer"></div>
+        <h3 class="jar-title">A Jar of Reasons Why I Love You</h3>
+        <div class="jar-stage">
+          <div id="jar-note" class="paper-slip">You are magical! ✨</div>
+          <div class="magic-jar" onclick="drawFromJar()" role="button" tabindex="0" aria-label="Tap the jar for a message">
+            <svg width="150" height="200" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M35 15 L65 15 L60 30 L40 30 Z" fill="#D2B48C" stroke="#8B4513" stroke-width="2"/>
+              <ellipse cx="50" cy="15" rx="15" ry="3" fill="#DEB887" stroke="#8B4513" stroke-width="1"/>
+              <path d="M40 30 C 20 40, 15 60, 15 100 C 15 120, 30 125, 50 125 C 70 125, 85 120, 85 100 C 85 60, 80 40, 60 30" fill="rgba(255, 255, 255, 0.15)" stroke="#E0F7FA" stroke-width="3"/>
+              <path d="M22 60 C 20 80, 25 110, 35 115" stroke="rgba(255,255,255,0.6)" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="40" cy="90" r="4" fill="#FFD700" filter="blur(1px)"/>
+              <circle cx="65" cy="80" r="3" fill="#FF69B4" filter="blur(1px)"/>
+              <circle cx="50" cy="105" r="5" fill="#87CEFA" filter="blur(1px)"/>
+              <circle cx="35" cy="70" r="3" fill="#FFA07A" filter="blur(1px)"/>
+              <circle cx="60" cy="110" r="4" fill="#98FB98" filter="blur(1px)"/>
+              <rect x="40" y="60" width="20" height="25" fill="#FFF8DC" rx="2" transform="rotate(-10 50 72.5)"/>
+              <text x="45" y="75" font-size="8" fill="#8B4513" font-family="sans-serif" transform="rotate(-10 50 72.5)">❤️</text>
+            </svg>
+          </div>
+          <p class="jar-hint">Tap the jar</p>
+        </div>
+      </div>
+    `;
+    generateStars();
+    loadWishJarMessages();
+    return;
+  }
+
+  /* Gift 0: Cute Moments -> Black screen + scatter -> Next -> Full-screen swipe slider + 2-line Happy Birthday Mahi overlay */
+  if (which === 0) {
+    modal.classList.add('dark-mode');
+    const images = cachedAlbums.images;
+    currentImages = images;
+    currentIndex = 0;
+
+    if (!images.length) {
+      completedGifts.add(0);
+      content.innerHTML = `<div class="dark-empty"><div>No photos found yet 💗<br><small>Add pictures to the <strong>images</strong> folder and list them in <strong>images.json</strong>.</small></div></div>`;
+      return;
+    }
+
+    content.innerHTML = `<div class="scatter-stage" id="scatterStage"></div><div class="scatter-next-wrap" id="scatterNextWrap"><button class="scatter-next-btn" id="scatterNextBtn">Next →</button></div>`;
+    runCuteMomentsScatter(images);
+    return;
+  }
+
+  /* Gift 1: My 11:11 -> Complete black screen + immediate full-screen swipe slider */
+  if (which === 1) {
+    modal.classList.add('dark-mode');
+    const images = cachedAlbums.images1;
+    currentImages = images;
+    currentIndex = 0;
+
+    if (!images.length) {
+      completedGifts.add(1);
+      content.innerHTML = `<div class="dark-empty"><div>No photos found yet 💗<br><small>Add pictures to the <strong>images1</strong> folder and list them in <strong>images1.json</strong>.</small></div></div>`;
+      return;
+    }
+
+    showDarkSlider(false);
+  }
+}
+
+function runCuteMomentsScatter(images) {
+  const stage = document.getElementById('scatterStage');
+  const nextWrap = document.getElementById('scatterNextWrap');
+  const nextBtn = document.getElementById('scatterNextBtn');
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const padX = 12, padTop = 14, padBottom = 82;
+  const usableW = Math.max(120, vw - padX * 2);
+  const usableH = Math.max(160, vh - padTop - padBottom);
+
+  const maxSide = Math.round(Math.min(180, Math.max(118, vw * 0.30)));
+  const minSide = 68;
+
+  const GRID = 40;
+  const grid = new Uint8Array(GRID * GRID);
+  let coveredCells = 0;
+  const totalCells = GRID * GRID;
+  const placed = [];
+
+  function getCardSize(src) {
+    const dim = imageDimensions[src] || { w: 400, h: 500 };
+    const ratio = dim.w / dim.h;
+    let w, h;
+    if (ratio >= 1) {
+      w = maxSide;
+      h = Math.max(minSide, Math.round(maxSide / ratio));
+    } else {
+      h = maxSide;
+      w = Math.max(minSide, Math.round(maxSide * ratio));
+    }
+    return { w: w + 8, h: h + 8 };
+  }
+
+  function calcOverlapRatio(r1, r2) {
+    const xOverlap = Math.max(0, Math.min(r1.x + r1.w, r2.x + r2.w) - Math.max(r1.x, r2.x));
+    const yOverlap = Math.max(0, Math.min(r1.y + r1.h, r2.y + r2.h) - Math.max(r1.y, r2.y));
+    const minArea = Math.min(r1.w * r1.h, r2.w * r2.h);
+    return minArea > 0 ? (xOverlap * yOverlap) / minArea : 0;
+  }
+  function markGrid(rect) {
+    const x0 = Math.max(0, Math.floor(((rect.x - padX) / usableW) * GRID));
+    const x1 = Math.min(GRID - 1, Math.floor((((rect.x + rect.w) - padX) / usableW) * GRID));
+    const y0 = Math.max(0, Math.floor(((rect.y - padTop) / usableH) * GRID));
+    const y1 = Math.min(GRID - 1, Math.floor((((rect.y + rect.h) - padTop) / usableH) * GRID));
+    for (let gy = y0; gy <= y1; gy++) {
+      for (let gx = x0; gx <= x1; gx++) {
+        const idx = gy * GRID + gx;
+        if (!grid[idx]) {
+          grid[idx] = 1;
+          coveredCells++;
+        }
+      }
+    }
+  }
+
+  function pickPosition(cardW, cardH) {
+    const coverage = coveredCells / totalCells;
+    const maxX = Math.max(padX, vw - padX - cardW);
+    const maxY = Math.max(padTop, vh - padBottom - cardH);
+
+    if (coverage >= 0.90) {
+      return {
+        x: padX + Math.random() * (maxX - padX),
+        y: padTop + Math.random() * (maxY - padTop)
+      };
+    }
+
+    let bestRect = null;
+    let bestMaxOverlap = Infinity;
+    for (let attempt = 0; attempt < 150; attempt++) {
+      const candidate = {
+        x: padX + Math.random() * (maxX - padX),
+        y: padTop + Math.random() * (maxY - padTop),
+        w: cardW,
+        h: cardH
+      };
+      let maxOv = 0;
+      for (let i = 0; i < placed.length; i++) {
+        const ov = calcOverlapRatio(candidate, placed[i]);
+        if (ov > maxOv) maxOv = ov;
+      }
+      if (maxOv <= 0.35) {
+        return candidate;
+      }
+      if (maxOv < bestMaxOverlap) {
+        bestMaxOverlap = maxOv;
+        bestRect = candidate;
+      }
+    }
+    return bestRect || {
+      x: padX + Math.random() * (maxX - padX),
+      y: padTop + Math.random() * (maxY - padTop)
+    };
+  }
+
+  const GAP_MS = 380;
+
+  images.forEach((src, i) => {
+    const t = setTimeout(() => {
+      const { w: cardW, h: cardH } = getCardSize(src);
+      const pos = pickPosition(cardW, cardH);
+      const rect = { x: pos.x, y: pos.y, w: cardW, h: cardH };
+      placed.push(rect);
+      markGrid(rect);
+
+      const rot = (Math.random() * 44 - 22).toFixed(1) + 'deg';
+      const el = document.createElement('div');
+      el.className = 'scatter-photo';
+      el.style.width = cardW + 'px';
+      el.style.height = cardH + 'px';
+      el.style.left = Math.round(rect.x) + 'px';
+      el.style.top = Math.round(rect.y) + 'px';
+      el.style.zIndex = String(i + 1);
+      el.style.setProperty('--rot', rot);
+      el.innerHTML = `<img src="${safeAttr(src)}" alt="Cute moment">`;
+      stage.appendChild(el);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => el.classList.add('visible'));
+      });
+    }, 220 + i * GAP_MS);
+    scatterTimers.push(t);
+  });
+
+  const finishTimer = setTimeout(() => {
+    nextWrap.classList.add('show');
+  }, 220 + images.length * GAP_MS + 350);
+  scatterTimers.push(finishTimer);
+
+  nextBtn.onclick = () => {
+    clearScatterTimers();
+    nextWrap.classList.remove('show');
+    const photos = stage.querySelectorAll('.scatter-photo');
+    photos.forEach(p => p.classList.add('fade-out'));
+    const swapTimer = setTimeout(() => {
+      showDarkSlider(true);
+    }, 420);
+    scatterTimers.push(swapTimer);
+  };
+}
+
+function showDarkSlider(withCuteOverlay) {
+  darkSliderActive = true;
+  currentIndex = 0;
+
+  if (currentImages.length <= 1 && (activeAlbum === 0 || activeAlbum === 1)) {
+    completedGifts.add(activeAlbum);
+  }
+
+  const cuteOverlayHTML = withCuteOverlay ? `
+    <div class="cute-overlay">
+      <div class="cute-overlay-line1">Happy Birthday</div>
+      <div class="cute-overlay-line2">
+        <span class="cute-overlay-name">Mahi</span>
+        <img class="cute-overlay-gif" src="${safeAttr(cuteGifSrc)}" alt="" onerror="handleGifFallback(this)">
+      </div>
+    </div>
+  ` : '';
+
+  const content = document.getElementById('albumContent');
+  content.innerHTML = `
+    <div class="dark-slider-wrap" id="darkSliderWrap">
+      <div class="dark-slide-counter" id="darkSlideCount">1 / ${currentImages.length}</div>
+      <div class="dark-slide-viewport" id="darkSlideViewport">
+        <img id="darkSlideImg" class="dark-slide-img slide-in-right" src="${safeAttr(currentImages[0])}" alt="Memory">
+      </div>
+      ${cuteOverlayHTML}
+      <div class="swipe-hint ${withCuteOverlay ? 'with-overlay' : ''}" id="swipeHint">
+        <div class="swipe-hand-track">
+          <span class="swipe-arrows">‹‹</span>
+          <span class="swipe-hand">👆</span>
+        </div>
+        <div class="swipe-label">Swipe for next</div>
+      </div>
+    </div>
+  `;
+
+  const hintEl = document.getElementById('swipeHint');
+  const hideHint = () => {
+    if (hintEl && !hintEl.classList.contains('hide')) {
+      hintEl.classList.add('hide');
+    }
+  };
+  hintTimer = setTimeout(hideHint, 3200);
+
+  let startX = null;
+  const vp = document.getElementById('darkSlideViewport');
+
+  vp.addEventListener('touchstart', e => {
+    startX = e.changedTouches[0].clientX;
+  }, { passive: true });
+
+  vp.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    startX = null;
+    if (Math.abs(dx) > 38) {
+      hideHint();
+      moveDarkSlide(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  vp.addEventListener('mousedown', e => { startX = e.clientX; });
+  vp.addEventListener('mouseup', e => {
+    if (startX === null) return;
+    const dx = e.clientX - startX;
+    startX = null;
+    if (Math.abs(dx) > 45) {
+      hideHint();
+      moveDarkSlide(dx < 0 ? 1 : -1);
+    }
+  });
+}
+
+function moveDarkSlide(delta) {
+  if (!currentImages.length) return;
+
+  if (delta > 0 && currentIndex >= currentImages.length - 1) {
+    if (activeAlbum === 0 || activeAlbum === 1) completedGifts.add(activeAlbum);
+    closeAlbum();
+    return;
+  }
+  if (delta < 0 && currentIndex <= 0) {
+    return;
+  }
+
+  currentIndex += delta;
+  if (currentIndex >= currentImages.length - 1 && (activeAlbum === 0 || activeAlbum === 1)) {
+    completedGifts.add(activeAlbum);
+  }
+
+  const img = document.getElementById('darkSlideImg');
+  const count = document.getElementById('darkSlideCount');
+  if (!img) return;
+  img.classList.remove('slide-in-right', 'slide-in-left');
+  void img.offsetWidth;
+  img.src = currentImages[currentIndex];
+  img.classList.add(delta >= 0 ? 'slide-in-right' : 'slide-in-left');
+  if (count) count.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+}
+
 function safeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
-function showSlider(){
- const area=document.getElementById('sliderArea');if(!currentImages.length)return;
- area.innerHTML=`<div class="slider"><h2>One moment at a time 💞</h2><div class="slide-frame"><img id="slideImage" src="${safeAttr(currentImages[0])}" alt="Memory"></div><div class="slide-controls"><button class="btn alt" onclick="moveSlide(-1)">←</button><span class="counter" id="slideCount">1 / ${currentImages.length}</span><button class="btn" onclick="moveSlide(1)">→</button></div></div>`;
- document.getElementById('sliderArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+function closeAlbum() {
+  clearScatterTimers();
+  darkSliderActive = false;
+  const closedAlbum = activeAlbum;
+  activeAlbum = null;
+
+  /* Wish Jar counts as completed once opened and closed */
+  if (closedAlbum === 2) {
+    completedGifts.add(2);
+  }
+
+  const modal = document.getElementById('albumModal');
+  modal.classList.remove('show','dark-mode','wish-jar-mode');
+  document.body.style.overflow = '';
+
+  checkAllGiftsCompleted();
 }
-function moveSlide(delta){currentIndex=(currentIndex+delta+currentImages.length)%currentImages.length;document.getElementById('slideImage').src=currentImages[currentIndex];document.getElementById('slideCount').textContent=(currentIndex+1)+' / '+currentImages.length;}
-const wishes=['May every little hope find its way to you. 🌷','May you laugh until your cheeks hurt. 💗','May this year surprise you in the sweetest ways. ✨','May you always feel loved, valued, and understood. 🫶🏻','May your favourite dreams become your favourite memories. 🌈'];
-function newWish(){document.getElementById('wishText').textContent=wishes[Math.floor(Math.random()*wishes.length)];}
-function closeAlbum(){document.getElementById('albumModal').classList.remove('show');document.body.style.overflow='';}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAlbum();});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('secretModal').classList.contains('show')) closeSecretModal();
+    else closeAlbum();
+  }
+  if (darkSliderActive && e.key === 'ArrowRight') moveDarkSlide(1);
+  if (darkSliderActive && e.key === 'ArrowLeft') moveDarkSlide(-1);
+});
+  
 </script>
 </body>
 </html>
