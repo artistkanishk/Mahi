@@ -309,7 +309,7 @@ let wishJarMessages = [
   "Your giggles are my favorite sound in the world.",
   "I love how we can talk about everything and nothing at all. 🗣️💫"
 ];
-let lastWishIndex = -1;
+const shownWishIndexes = new Set();
 let wishNoteOpen = false;
 
 async function loadWishJarMessages() {
@@ -634,11 +634,20 @@ function drawFromJar() {
   const note = document.getElementById('jar-note');
   if (!note || !wishJarMessages.length || wishNoteOpen) return;
 
-  let idx = Math.floor(Math.random() * wishJarMessages.length);
-  if (wishJarMessages.length > 1 && idx === lastWishIndex) {
-    idx = (idx + 1 + Math.floor(Math.random() * (wishJarMessages.length - 1))) % wishJarMessages.length;
+  // Each opening of the Wish Jar is one session: never repeat a message
+  // during that session, even after its note is dismissed with the ×.
+  const unseen = wishJarMessages
+    .map((message, index) => index)
+    .filter(index => !shownWishIndexes.has(index));
+
+  if (!unseen.length) {
+    const hint = document.querySelector('.jar-hint');
+    if (hint) hint.textContent = "You've read all the wishes. Close and reopen the jar for a fresh session. ✨";
+    return;
   }
-  lastWishIndex = idx;
+
+  const idx = unseen[Math.floor(Math.random() * unseen.length)];
+  shownWishIndexes.add(idx);
   note.querySelector('.wish-note-text').textContent = wishJarMessages[idx];
   wishNoteOpen = true;
   note.classList.add('show');
@@ -665,6 +674,9 @@ function openAlbum(which) {
 
   /* Gift 2: Starry Night Wish Jar (loads messages from wish-jar.json) */
   if (which === 2) {
+    // Reopening the whole Wish Jar starts a fresh session.
+    shownWishIndexes.clear();
+    wishNoteOpen = false;
     modal.classList.add('wish-jar-mode');
     content.innerHTML = `
       <div class="starry-night">
