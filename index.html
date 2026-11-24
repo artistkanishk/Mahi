@@ -84,7 +84,6 @@ p{font-size:clamp(1rem,2.6vw,1.15rem);line-height:1.65}
 .magic-jar:hover{transform:scale(1.05);filter:drop-shadow(0 0 35px rgba(255,215,0,.8))}
 .paper-slip{position:absolute;top:0;width:min(320px,82vw);background:#fffdf5;color:#5c4a3d;padding:20px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.3);font-family:'Dancing Script',cursive;font-size:1.5rem;line-height:1.35;text-align:center;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;z-index:20}
 .paper-slip.show{opacity:1;transform:translateY(-80px) scale(1.1)}
-.paper-slip-close{position:absolute;top:5px;right:7px;width:28px;height:28px;border:0;border-radius:50%;background:#f7e8e8;color:#8b5268;font:20px/1 system-ui;cursor:pointer;z-index:2}
 .jar-hint{color:rgba(255,255,255,.7);margin-top:24px;font:300 13px system-ui;letter-spacing:.16em;text-transform:uppercase}
 
 /* Dark scatter stage for Cute Moments */
@@ -305,12 +304,13 @@ let wishJarMessages = [
   "Your kindness and heart make me fall for you more every day.",
   "You are the most beautiful person, inside and out. 🌹",
   "I cherish every tiny moment spent with you.",
-  "You're not just my girlfriend, you're my safe place. 🏡❤️",
+  "you're my safe place. 🏡❤️",
   "Your giggles are my favorite sound in the world.",
-  "I love how we can talk about everything and nothing at all. 🗣️💫"
+  "I love how we can talk about everything and nothing at all. 🗣️💫",
+  "I may not have many topics to talk but i genuinely enjoy every conversation with you"
 ];
 const shownWishIndexes = new Set();
-let wishNoteOpen = false;
+let wishDrawTimer = null;
 
 async function loadWishJarMessages() {
   try {
@@ -407,8 +407,8 @@ async function initAndPreload() {
     cachedAlbums.images1 = album1;
     allUrls = [...new Set([...album0, ...album1, cuteGifSrc])];
   } else {
-    /* showImages is false -> 50 placeholders in section 1, 2 placeholders in section 2 */
-    cachedAlbums.images = Array(50).fill(HTML_PLACEHOLDER_IMG);
+    /* showImages is false -> 20 placeholders in section 1, 2 placeholders in section 2 */
+    cachedAlbums.images = Array(20).fill(HTML_PLACEHOLDER_IMG);
     cachedAlbums.images1 = Array(2).fill(HTML_PLACEHOLDER_IMG);
     allUrls = [HTML_PLACEHOLDER_IMG, cuteGifSrc];
   }
@@ -630,28 +630,40 @@ function generateStars() {
   }
 }
 
-function drawFromJar() {
+function revealNextWish() {
   const note = document.getElementById('jar-note');
-  if (!note || !wishJarMessages.length || wishNoteOpen) return;
+  if (!note || !wishJarMessages.length) return;
 
   const unseen = wishJarMessages
     .map((message, index) => index)
     .filter(index => !shownWishIndexes.has(index));
-  if (!unseen.length) return;
+
+  if (!unseen.length) {
+    const hint = document.querySelector('.jar-hint');
+    if (hint) hint.textContent = "You've read all the wishes. Reopen the jar for a fresh set. ✨";
+    return;
+  }
 
   const idx = unseen[Math.floor(Math.random() * unseen.length)];
   shownWishIndexes.add(idx);
-  note.querySelector('.wish-note-text').textContent = wishJarMessages[idx];
-  wishNoteOpen = true;
+  note.textContent = wishJarMessages[idx];
   note.classList.add('show');
 }
 
-function dismissWishNote(event) {
-  if (event) event.stopPropagation();
+function drawFromJar() {
   const note = document.getElementById('jar-note');
-  if (!note || !wishNoteOpen) return;
-  note.classList.remove('show');
-  wishNoteOpen = false;
+  if (!note || !wishJarMessages.length || wishDrawTimer) return;
+
+  if (note.classList.contains('show')) {
+    note.classList.remove('show');
+    wishDrawTimer = setTimeout(() => {
+      wishDrawTimer = null;
+      revealNextWish();
+    }, 500);
+    return;
+  }
+
+  revealNextWish();
 }
 
 function openAlbum(which) {
@@ -669,17 +681,14 @@ function openAlbum(which) {
   if (which === 2) {
     // Reopening the whole Wish Jar starts a fresh session.
     shownWishIndexes.clear();
-    wishNoteOpen = false;
+    if (wishDrawTimer) { clearTimeout(wishDrawTimer); wishDrawTimer = null; }
     modal.classList.add('wish-jar-mode');
     content.innerHTML = `
       <div class="starry-night">
         <div id="stars-container" class="stars-layer"></div>
         <h3 class="jar-title">A Jar of Reasons Why I Love You</h3>
         <div class="jar-stage">
-          <div id="jar-note" class="paper-slip">
-            <button class="paper-slip-close" type="button" onclick="dismissWishNote(event)" aria-label="Close message">×</button>
-            <span class="wish-note-text">You are magical! ✨</span>
-          </div>
+          <div id="jar-note" class="paper-slip">You are magical! ✨</div>
           <div class="magic-jar" onclick="drawFromJar()" role="button" tabindex="0" aria-label="Tap the jar for a message">
             <svg width="150" height="200" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M35 15 L65 15 L60 30 L40 30 Z" fill="#D2B48C" stroke="#8B4513" stroke-width="2"/>
