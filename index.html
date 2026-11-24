@@ -84,6 +84,7 @@ p{font-size:clamp(1rem,2.6vw,1.15rem);line-height:1.65}
 .magic-jar:hover{transform:scale(1.05);filter:drop-shadow(0 0 35px rgba(255,215,0,.8))}
 .paper-slip{position:absolute;top:0;width:min(320px,82vw);background:#fffdf5;color:#5c4a3d;padding:20px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,.3);font-family:'Dancing Script',cursive;font-size:1.5rem;line-height:1.35;text-align:center;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;z-index:20}
 .paper-slip.show{opacity:1;transform:translateY(-80px) scale(1.1)}
+.paper-slip-close{position:absolute;top:5px;right:7px;width:28px;height:28px;border:0;border-radius:50%;background:#f7e8e8;color:#8b5268;font:20px/1 system-ui;cursor:pointer;z-index:2}
 .jar-hint{color:rgba(255,255,255,.7);margin-top:24px;font:300 13px system-ui;letter-spacing:.16em;text-transform:uppercase}
 
 /* Dark scatter stage for Cute Moments */
@@ -92,9 +93,6 @@ p{font-size:clamp(1rem,2.6vw,1.15rem);line-height:1.65}
 .scatter-photo.visible{opacity:1;transform:scale(1) rotate(var(--rot))}
 .scatter-photo.fade-out{opacity:0;transform:scale(.85) rotate(var(--rot));transition:opacity .4s ease,transform .4s ease}
 .scatter-photo img{width:100%;height:100%;object-fit:contain;border-radius:7px;display:block}
-.scatter-next-wrap{position:fixed;left:0;right:0;bottom:26px;display:flex;justify-content:center;z-index:25;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .45s ease,transform .45s ease}
-.scatter-next-wrap.show{opacity:1;transform:translateY(0);pointer-events:auto}
-.scatter-next-btn{border:0;border-radius:999px;padding:14px 32px;background:linear-gradient(135deg,#ff79a4,#ee5f91);color:#fff;font:600 16px system-ui;box-shadow:0 10px 30px rgba(255,111,159,.45)}
 
 /* Full-screen dark swipe slider (Cute Moments & My 11:11) */
 .dark-slider-wrap{position:fixed;inset:0;width:100vw;height:100dvh;background:#000;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;animation:fade .35s ease}
@@ -312,6 +310,7 @@ let wishJarMessages = [
   "I love how we can talk about everything and nothing at all. 🗣️💫"
 ];
 let lastWishIndex = -1;
+let wishNoteOpen = false;
 
 async function loadWishJarMessages() {
   try {
@@ -567,7 +566,24 @@ let scatterTimers = [];
 let hintTimer = null;
 let darkSliderActive = false;
 const completedGifts = new Set();
+try {
+  const saved = JSON.parse(localStorage.getItem('mahiCompletedGifts') || '[]');
+  if (Array.isArray(saved)) saved.forEach(n => {
+    if ([0, 1, 2].includes(n)) completedGifts.add(n);
+  });
+  if (localStorage.getItem('mahiAllGiftsOpened') === 'true') {
+    [0, 1, 2].forEach(n => completedGifts.add(n));
+  }
+} catch (e) {}
 let secretShownOnce = false;
+
+function markGiftCompleted(index) {
+  if (![0, 1, 2].includes(index)) return;
+  completedGifts.add(index);
+  try {
+    localStorage.setItem('mahiCompletedGifts', JSON.stringify([...completedGifts]));
+  } catch (e) {}
+}
 
 function clearScatterTimers() {
   scatterTimers.forEach(id => clearTimeout(id));
@@ -616,24 +632,24 @@ function generateStars() {
 
 function drawFromJar() {
   const note = document.getElementById('jar-note');
-  if (!note || !wishJarMessages.length) return;
+  if (!note || !wishJarMessages.length || wishNoteOpen) return;
 
-  function showNewNote() {
-    let idx = Math.floor(Math.random() * wishJarMessages.length);
-    if (wishJarMessages.length > 1 && idx === lastWishIndex) {
-      idx = (idx + 1) % wishJarMessages.length;
-    }
-    lastWishIndex = idx;
-    note.textContent = wishJarMessages[idx];
-    note.classList.add('show');
+  let idx = Math.floor(Math.random() * wishJarMessages.length);
+  if (wishJarMessages.length > 1 && idx === lastWishIndex) {
+    idx = (idx + 1 + Math.floor(Math.random() * (wishJarMessages.length - 1))) % wishJarMessages.length;
   }
+  lastWishIndex = idx;
+  note.querySelector('.wish-note-text').textContent = wishJarMessages[idx];
+  wishNoteOpen = true;
+  note.classList.add('show');
+}
 
-  if (note.classList.contains('show')) {
-    note.classList.remove('show');
-    setTimeout(showNewNote, 500);
-  } else {
-    showNewNote();
-  }
+function dismissWishNote(event) {
+  if (event) event.stopPropagation();
+  const note = document.getElementById('jar-note');
+  if (!note || !wishNoteOpen) return;
+  note.classList.remove('show');
+  wishNoteOpen = false;
 }
 
 function openAlbum(which) {
@@ -655,7 +671,10 @@ function openAlbum(which) {
         <div id="stars-container" class="stars-layer"></div>
         <h3 class="jar-title">A Jar of Reasons Why I Love You</h3>
         <div class="jar-stage">
-          <div id="jar-note" class="paper-slip">You are magical! ✨</div>
+          <div id="jar-note" class="paper-slip">
+            <button class="paper-slip-close" type="button" onclick="dismissWishNote(event)" aria-label="Close message">×</button>
+            <span class="wish-note-text">You are magical! ✨</span>
+          </div>
           <div class="magic-jar" onclick="drawFromJar()" role="button" tabindex="0" aria-label="Tap the jar for a message">
             <svg width="150" height="200" viewBox="0 0 100 130" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M35 15 L65 15 L60 30 L40 30 Z" fill="#D2B48C" stroke="#8B4513" stroke-width="2"/>
@@ -688,12 +707,12 @@ function openAlbum(which) {
     currentIndex = 0;
 
     if (!images.length) {
-      completedGifts.add(0);
+      markGiftCompleted(0);
       content.innerHTML = `<div class="dark-empty"><div>No photos found yet 💗<br><small>Add pictures to the <strong>images</strong> folder and list them in <strong>images.json</strong>.</small></div></div>`;
       return;
     }
 
-    content.innerHTML = `<div class="scatter-stage" id="scatterStage"></div><div class="scatter-next-wrap" id="scatterNextWrap"><button class="scatter-next-btn" id="scatterNextBtn">Next →</button></div>`;
+    content.innerHTML = `<div class="scatter-stage" id="scatterStage"></div>`;
     runCuteMomentsScatter(images);
     return;
   }
@@ -706,7 +725,7 @@ function openAlbum(which) {
     currentIndex = 0;
 
     if (!images.length) {
-      completedGifts.add(1);
+      markGiftCompleted(1);
       content.innerHTML = `<div class="dark-empty"><div>No photos found yet 💗<br><small>Add pictures to the <strong>images1</strong> folder and list them in <strong>images1.json</strong>.</small></div></div>`;
       return;
     }
@@ -717,9 +736,6 @@ function openAlbum(which) {
 
 function runCuteMomentsScatter(images) {
   const stage = document.getElementById('scatterStage');
-  const nextWrap = document.getElementById('scatterNextWrap');
-  const nextBtn = document.getElementById('scatterNextBtn');
-
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const padX = 12, padTop = 14, padBottom = 82;
@@ -841,20 +857,11 @@ function runCuteMomentsScatter(images) {
   });
 
   const finishTimer = setTimeout(() => {
-    nextWrap.classList.add('show');
-  }, 220 + images.length * GAP_MS + 350);
+    // The collage itself is the complete first gift. Leave it on screen;
+    // there is no second slider that requires viewing every image.
+    markGiftCompleted(0);
+  }, 220 + Math.max(0, images.length - 1) * GAP_MS + 650);
   scatterTimers.push(finishTimer);
-
-  nextBtn.onclick = () => {
-    clearScatterTimers();
-    nextWrap.classList.remove('show');
-    const photos = stage.querySelectorAll('.scatter-photo');
-    photos.forEach(p => p.classList.add('fade-out'));
-    const swapTimer = setTimeout(() => {
-      showDarkSlider(true);
-    }, 420);
-    scatterTimers.push(swapTimer);
-  };
 }
 
 function showDarkSlider(withCuteOverlay) {
@@ -862,7 +869,7 @@ function showDarkSlider(withCuteOverlay) {
   currentIndex = 0;
 
   if (currentImages.length <= 1 && (activeAlbum === 0 || activeAlbum === 1)) {
-    completedGifts.add(activeAlbum);
+    markGiftCompleted(activeAlbum);
   }
 
   const cuteOverlayHTML = withCuteOverlay ? `
@@ -934,7 +941,7 @@ function moveDarkSlide(delta) {
   if (!currentImages.length) return;
 
   if (delta > 0 && currentIndex >= currentImages.length - 1) {
-    if (activeAlbum === 0 || activeAlbum === 1) completedGifts.add(activeAlbum);
+    if (activeAlbum === 0 || activeAlbum === 1) markGiftCompleted(activeAlbum);
     closeAlbum();
     return;
   }
@@ -944,7 +951,7 @@ function moveDarkSlide(delta) {
 
   currentIndex += delta;
   if (currentIndex >= currentImages.length - 1 && (activeAlbum === 0 || activeAlbum === 1)) {
-    completedGifts.add(activeAlbum);
+    markGiftCompleted(activeAlbum);
   }
 
   const img = document.getElementById('darkSlideImg');
@@ -967,7 +974,7 @@ function closeAlbum() {
 
   /* Wish Jar counts as completed once opened and closed */
   if (closedAlbum === 2) {
-    completedGifts.add(2);
+    markGiftCompleted(2);
   }
 
   const modal = document.getElementById('albumModal');
