@@ -634,17 +634,10 @@ function drawFromJar() {
   const note = document.getElementById('jar-note');
   if (!note || !wishJarMessages.length || wishNoteOpen) return;
 
-  // Each opening of the Wish Jar is one session: never repeat a message
-  // during that session, even after its note is dismissed with the ×.
   const unseen = wishJarMessages
     .map((message, index) => index)
     .filter(index => !shownWishIndexes.has(index));
-
-  if (!unseen.length) {
-    const hint = document.querySelector('.jar-hint');
-    if (hint) hint.textContent = "You've read all the wishes. Close and reopen the jar for a fresh session. ✨";
-    return;
-  }
+  if (!unseen.length) return;
 
   const idx = unseen[Math.floor(Math.random() * unseen.length)];
   shownWishIndexes.add(idx);
