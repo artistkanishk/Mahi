@@ -472,7 +472,7 @@ document.getElementById('openGift').addEventListener('click',()=>{
 });
 
 const branches={
- mood:{title:'How are you feeling today, birthday girl?',sub:'Choose honestly — this is your day. 💞',answers:[
+ mood:{title:'How are you feeling today, my birthday girl?',sub:'Choose honestly — this is your day. 💞',answers:[
   ['Over the moon! 🥹','dream'],['A little shy 🙈','shy'],['Waiting for cake 🎂','cake']]},
  dream:{title:'What should this new year bring you?',sub:'Pick the wish your heart wants most.',answers:[
   ['Peace & happiness 🌸','peace'],['All my dreams coming true ✨','dreams']]},
@@ -640,7 +640,7 @@ function revealNextWish() {
 
   if (!unseen.length) {
     const hint = document.querySelector('.jar-hint');
-    if (hint) hint.textContent = "You've read all the wishes. Reopen the jar for a fresh set. ✨";
+    if (hint) hint.textContent = "You've read all the wishes. ✨";
     return;
   }
 
