@@ -397,11 +397,11 @@ async function initAndPreload() {
       getImages('images1')
     ]);
 
-    /* Separate images/gif.(png|jpg|jpeg|gif|webp) so it is used in the overlay, not as a regular slide */
+    /* Keep gif.gif in Cute Moments so it appears in the animated collage. */
     const gifPattern = /(^|\/)gif\.(png|jpe?g|gif|webp)$/i;
     const foundGif = rawAlbum0.find(src => gifPattern.test(src));
     if (foundGif) cuteGifSrc = foundGif;
-    const album0 = rawAlbum0.filter(src => !gifPattern.test(src));
+    const album0 = rawAlbum0; // includes the GIF; browsers preserve its animation in the collage
 
     cachedAlbums.images = album0;
     cachedAlbums.images1 = album1;
